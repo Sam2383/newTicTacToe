@@ -72,7 +72,7 @@ function humanTurn(playerChoice) {
   generateBoard(board);
 }
 
-function isWinner(board, winner) {
+function isWinner(board) {
   const winningCombinations = [
     [1, 2, 3],
     [1, 4, 7],
@@ -105,15 +105,36 @@ function isWinner(board, winner) {
   return false;
 }
 
-while (winner == false || boardFull == false) {
-  console.log("YOUR MOVE");
-  humanTurn(playerChoice);
-  if (isWinner(board, winner)) {
-    break;
+function checkBoardFull(board) {
+  for (let i = 1; i < Object.keys(board).length; i++) {
+    if (board[i] === "") {
+      return false;
+    }
   }
-  console.log("COMPUTER'S MOVE");
-  computerTurn(computerChoice);
-  if (isWinner(board, winner)) {
-    break;
+  return true;
+}
+
+function play() {
+  while (winner == false || boardFull == false) {
+    console.log("YOUR MOVE");
+    humanTurn(playerChoice);
+    if (isWinner(board)) {
+      break;
+    }
+    console.log("COMPUTER'S MOVE");
+    computerTurn(computerChoice);
+    if (isWinner(board)) {
+      break;
+    }
+    if (checkBoardFull(board)) {
+      playAgain = readlineSync.question("IT'S A TIE! Play again? (y/n)");
+      if (playAgain === "y") {
+        play();
+      } else {
+        break;
+      }
+    }
   }
 }
+
+play();
