@@ -1,37 +1,9 @@
 const readlineSync = require("readline-sync");
-let boardFull = false;
-let winner = false;
-let board = {
-  1: "",
-  2: "",
-  3: "",
-  4: "",
-  5: "",
-  6: "",
-  7: "",
-  8: "",
-  9: "",
-};
 
-playerChoice = readlineSync.question(
-  "Weclome to tic-tac-toe, input 'O' to be noughts or 'X' to be crosses: "
-);
-
-let computerChoice = "";
-if (playerChoice === "X") {
-  computerChoice = "O";
-} else if (playerChoice === "0") {
-  computerChoice = "X";
-} else {
-  console.log("Invalid input, defaulting to 'X' for player");
-  playerChoice = "X";
-  computerChoice = "O";
-}
-
-generateBoard(board);
-
-function computerTurn(computerChoice) {
+function computerTurn(computerChoice, board) {
   // DYNAMICALLY REDUCE NO. OF COMPUTER CHOICES
+  console.log("COMPUTER'S MOVE");
+
   const availablePos = Object.keys(board).filter((key) => board[key] == "");
   let availablePosIndex = Math.floor(Math.random() * availablePos.length);
   board[availablePos[availablePosIndex]] = computerChoice;
@@ -49,7 +21,8 @@ function generateBoard(board) {
   );
 }
 
-function humanTurn(playerChoice) {
+function humanTurn(playerChoice, board) {
+  console.log("YOUR MOVE");
   let humanPos = readlineSync.question(
     `Choose a position to make your move (1-9): `
   );
@@ -57,7 +30,6 @@ function humanTurn(playerChoice) {
     humanPos = readlineSync.question(
       `Invalid input, choose a position to make your move (1-9): `
     );
-    // humanTurn(playerChoice);
   }
 
   if (board[humanPos] == "") {
@@ -72,7 +44,7 @@ function humanTurn(playerChoice) {
   generateBoard(board);
 }
 
-function isWinner(board) {
+function isWinner(board, playerChoice, computerChoice) {
   const winningCombinations = [
     [1, 2, 3],
     [1, 4, 7],
@@ -106,7 +78,7 @@ function isWinner(board) {
 }
 
 function checkBoardFull(board) {
-  for (let i = 1; i < Object.keys(board).length; i++) {
+  for (let i = 1; i <= Object.keys(board).length; i++) {
     if (board[i] === "") {
       return false;
     }
@@ -115,19 +87,44 @@ function checkBoardFull(board) {
 }
 
 function play() {
+  let winner = false;
+  let board = {
+    1: "",
+    2: "",
+    3: "",
+    4: "",
+    5: "",
+    6: "",
+    7: "",
+    8: "",
+    9: "",
+  };
+
+  playerChoice = readlineSync.question(
+    "Weclome to tic-tac-toe, input 'O' to be noughts or 'X' to be crosses: "
+  );
+
+  let computerChoice = "";
+  if (playerChoice === "X") {
+    computerChoice = "O";
+  } else if (playerChoice === "0") {
+    computerChoice = "X";
+  } else {
+    console.log("Invalid input, defaulting to 'X' for player");
+    playerChoice = "X";
+    computerChoice = "O";
+  }
+
+  generateBoard(board);
+  
   while (winner == false || boardFull == false) {
-    console.log("YOUR MOVE");
-    humanTurn(playerChoice);
-    if (isWinner(board)) {
+    humanTurn(playerChoice, board);
+    computerTurn(computerChoice, board);
+
+    if (isWinner(board, playerChoice, computerChoice)) {
       break;
-    }
-    console.log("COMPUTER'S MOVE");
-    computerTurn(computerChoice);
-    if (isWinner(board)) {
-      break;
-    }
-    if (checkBoardFull(board)) {
-      playAgain = readlineSync.question("IT'S A TIE! Play again? (y/n)");
+    } else if (checkBoardFull(board)) {
+      playAgain = readlineSync.question("IT'S A TIE! Play again? (y/n): ");
       if (playAgain === "y") {
         play();
       } else {
