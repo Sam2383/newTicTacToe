@@ -88,26 +88,21 @@ function checkBoardFull(board) {
 
 function play() {
   let winner = false;
+  let boardFull = false; // must define before using in loop
   let board = {
-    1: "",
-    2: "",
-    3: "",
-    4: "",
-    5: "",
-    6: "",
-    7: "",
-    8: "",
-    9: "",
+    1: "", 2: "", 3: "",
+    4: "", 5: "", 6: "",
+    7: "", 8: "", 9: ""
   };
 
-  playerChoice = readlineSync.question(
-    "Weclome to tic-tac-toe, input 'O' to be noughts or 'X' to be crosses: "
-  );
+  let playerChoice = readlineSync.question(
+    "Welcome to tic-tac-toe, input 'O' to be noughts or 'X' to be crosses: "
+  ).toUpperCase();
 
   let computerChoice = "";
   if (playerChoice === "X") {
     computerChoice = "O";
-  } else if (playerChoice === "0") {
+  } else if (playerChoice === "O") {
     computerChoice = "X";
   } else {
     console.log("Invalid input, defaulting to 'X' for player");
@@ -117,20 +112,31 @@ function play() {
 
   generateBoard(board);
 
-  while (winner == false || boardFull == false) {
+  while (!winner && !boardFull) {
+    // Human turn
     humanTurn(playerChoice, board);
     if (isWinner(board, playerChoice, computerChoice)) {
+      winner = true;
       break;
-    } else if (checkBoardFull(board)) {
-      playAgain = readlineSync.question("IT'S A TIE! Play again? (y/n): ");
-      if (playAgain === "y") {
-        play();
-      } else {
-        break;
-      }
-    } else {
-      computerTurn(computerChoice, board);
     }
+
+    boardFull = checkBoardFull(board);
+    if (boardFull) {
+      let playAgain = readlineSync.question("IT'S A TIE! Play again? (y/n): ");
+      if (playAgain.toLowerCase() === "y") {
+        return play();
+      }
+      break;
+    }
+
+    // Computer turn
+    computerTurn(computerChoice, board);
+    if (isWinner(board, playerChoice, computerChoice)) {
+      winner = true;
+      break;
+    }
+
+    boardFull = checkBoardFull(board);
   }
 }
 
