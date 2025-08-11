@@ -118,6 +118,7 @@ function play() {
   generateBoard(board);
 
   while (winner == false || boardFull == false) {
+    humanTurn(playerChoice, board);
     if (isWinner(board, playerChoice, computerChoice)) {
       break;
     } else if (checkBoardFull(board)) {
@@ -128,7 +129,6 @@ function play() {
         break;
       }
     } else {
-      humanTurn(playerChoice, board);
       computerTurn(computerChoice, board);
     }
   }
